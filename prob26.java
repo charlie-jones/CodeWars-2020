@@ -80,5 +80,6 @@ public class prob26 {
 
 			System.out.println(result);
 		}
+		f.close();
 	}
 }
