@@ -9,7 +9,7 @@ public class prob22 {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 
-		BufferedReader f = new BufferedReader(new FileReader("prob22-3-in.txt"));
+		BufferedReader f = new BufferedReader(new FileReader("input.txt"));
 		
 		
 		char[] E = { 'E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'E' };
