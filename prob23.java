@@ -26,24 +26,30 @@ public class prob23 {
 		
 		flip.put('n', 'u');
 		flip.put('u', 'n');
-		
+		HashSet<Character> chars = new HashSet<Character>();
+		chars.add('o');
+		chars.add('s');
+		chars.add('x');
+		chars.add('z');
 		for (int i = 0; i < N; i++) {
 	        char[] cArr = f.readLine().toLowerCase().replaceAll("\\p{Punct}","").toCharArray(); 
 	        char[] flipped = new char[cArr.length];
 	        int siz = cArr.length-1;
 	        for (int j = 0; j < cArr.length; j++) {
-	        	flipped[j] = cArr[siz-j];
 	        	if (flip.containsKey(cArr[siz-j])) {
 	        		flipped[j] = flip.get(cArr[siz-j]);
+	        	} else {
+	        		if (!chars.contains(cArr[siz-j]) && cArr[siz-j] != ' ') break;
+	    	        flipped[j] = cArr[siz-j];
 	        	}
 	        }
 	        String condensedF = String.valueOf(flipped).replaceAll("\\s","");
 	        String condensedA = String.valueOf(cArr).replaceAll("\\s","");
-	        String correct = " (not) ";
+	        String correct = " (not)";
 	        if (condensedF.equals(condensedA)) {
-	        	correct = " (is) ";
+	        	correct = " (is)";
 	        }
-	        System.out.println(String.valueOf(cArr) + correct + String.valueOf(flipped));
+	        System.out.println(String.valueOf(cArr) + correct);
 		}
 		
 	}
