@@ -20,6 +20,7 @@ public class prob21 {
 	        double tot = (rate/60 * totalMin); // check this line
 			System.out.println(name + " earned $" + decimalFormat.format(tot));
 		}
+		s.close();
 		
 	}
 	static int diffMinutes(String in, String out) {
