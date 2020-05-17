@@ -16,11 +16,21 @@ public class prob30 {
 				cake[i][j] = String.valueOf(in.charAt(j));
 			}
 		}
-//		for (int i = 0; i < n; i++) {
-//			System.out.println(Arrays.toString(cake[i]));
-//		}
+	
 		Node root = new Node(cake);
 		
+		
+		print2D(cake, n);
+	}
+	
+	private static void print2D(String[][] cake, int n) {
+		for (int i = 0; i < n; i++) {
+			String ln = "";
+			for (int j = 0; j < n; j++) {
+				ln += cake[i][j];
+			}
+			System.out.println(ln);
+		}
 	}
 	
 	private static String[][] fillInGivens(String[][] arr) {
