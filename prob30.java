@@ -19,10 +19,10 @@ public class prob30 {
 
 		Node root = new Node(cake);
 		String[][] answer = root.iterate(cake);
-		for (int i = 0; i < n; i++) {
-			System.out.println(Arrays.toString(cake[i]));
-		}
-		
+//		for (int i = 0; i < n; i++) {
+//			System.out.println(Arrays.toString(cake[i]));
+//		}
+
 		print2D(cake, n);
 	}
 	
@@ -269,7 +269,7 @@ public class prob30 {
 		
 		public String[][] iterate(String[][] arr) {
 			int[] tmpLocation = findNextQuestionMark(cake);
-			
+			System.out.println("make branch");
 			if (tmpLocation == null) {
 				if (twoByTwoCheck(arr) == true && connectedCheck(arr) == true && loopCheck(arr) == true) {
 					return arr;
@@ -277,7 +277,6 @@ public class prob30 {
 				
 				return null;
 			}
-			
 			else {
 				String[][] leftBranch = arr;
 				String[][] rightBranch = arr;
