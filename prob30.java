@@ -217,19 +217,30 @@ public class prob30 {
 		return false; // not 2x2
 	}
 	
-	public static int[] findNextQuestionMark(String[][] arr) {
-		int[] answer = new int[2];
+	public static ArrayList<Integer>[] findAvailableQuestionMarks(String[][] arr) {
+
+		ArrayList<Integer>[] answer = new ArrayList[2];
+
 		for (int i = 0; i < arr.length; i++) {
+
 			for (int j = 0; j < arr.length; j++) {
+
 				if (arr[i][j].equals("?")) {
-					answer[0] = i;
-					answer[1] = j;
-					return answer;
+
+					answer[0].add(i);
+
+					answer[1].add(j);
+
 				}
+
 			}
+
 		}
+
 		
-		return null;
+
+		return answer;
+
 	}
 	
 	static class Node {
