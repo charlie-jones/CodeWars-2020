@@ -17,7 +17,11 @@ public class prob30 {
 		}
 
 		Node root = new Node(cake);
-		String[][] answer = root.iterate(cake,0,0);
+		boolean[][] isVisited = new boolean[n][n];
+		for (boolean[] b : isVisited) {
+			Arrays.fill(b, false);
+		}
+		root.iterate(cake,0,0, isVisited); // change from 0,0 to a location found to have a question mark
 //		for (int i = 0; i < n; i++) {
 //			System.out.println(Arrays.toString(cake[i]));
 //		}
@@ -220,7 +224,8 @@ public class prob30 {
 	public static ArrayList<Integer>[] findAvailableQuestionMarks(String[][] arr) {
 
 		ArrayList<Integer>[] answer = new ArrayList[2];
-
+		answer[0] = new ArrayList<Integer>();
+		answer[1] = new ArrayList<Integer>();
 		for (int i = 0; i < arr.length; i++) {
 
 			for (int j = 0; j < arr.length; j++) {
@@ -250,12 +255,12 @@ public class prob30 {
 			cake = arr.clone();
 		}
 		
-		public String[][] iterate(String[][] arr, int i, int j) {
+		public String[][] iterate(String[][] arr, int i, int j, boolean[][] visited) {
 			if (!twoByTwoCheck(arr)) {
 				System.out.println("branch ended");
 				return null;
 			}
-			System.out.println("make branch");
+			visited[i][j] = true;
 			String[][] leftBranch = arr.clone();
 			String[][] rightBranch = arr.clone();
 			leftBranch[i][j] = ".";
@@ -266,13 +271,26 @@ public class prob30 {
 //			if (tmpLocation == null) {
 //				return arr;
 //			}
-			
-			// INSTEAD, find ALL available question marks
-			// for loop here
-			
-			String[][] left = iterate(leftBranch, i,j); //  change from i,j to location of a question mark
-			String[][] right = iterate(rightBranch,i,j); //  change to above
-			
+			ArrayList<Integer>[] qMarks = findAvailableQuestionMarks(arr).clone();
+			// System.out.println(Arrays.toString(qMarks)); // PASS
+			int siz = arr.length;
+			String[][] left = new String[siz][siz];
+			String[][] right = new String[siz][siz];
+			int len = qMarks[0].size();
+			for (int a = 0; a < len; a++) {
+				System.out.println("new branch");
+				int iPos = qMarks[0].get(a);
+				int jPos = qMarks[1].get(a);
+				if (visited[iPos][jPos]) continue;
+				visited[iPos][jPos] = true;
+				try {
+					left = iterate(leftBranch, iPos, jPos, visited).clone(); 
+				} catch (Exception e) {}
+				try {
+					right = iterate(rightBranch, iPos, jPos, visited).clone(); 
+				} catch (Exception e) {}
+			}
+			visited[i][j] = false;
 			if (left == null && right == null) {
 				return null;
 			}
