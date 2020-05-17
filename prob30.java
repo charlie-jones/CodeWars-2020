@@ -236,20 +236,18 @@ public class prob30 {
 		private String[][] cake; 
 	
 		public Node (String[][] arr) {
-			cake = arr;
+			cake = arr.clone();
 		}
 		
 		public String[][] iterate(String[][] arr) {
+			if (!twoByTwoCheck(arr)) {
+				System.out.println("branch ended");
+				return null;
+			}
 			int[] next = findNextQuestionMark(cake);
 			int[] tmpLocation = next==null ? null : next.clone();
 			if (tmpLocation == null) {
-				System.out.println("nulll");
-				if (twoByTwoCheck(arr)) {
-					System.out.println("fdsfds");
-					return arr;
-				}
-				
-				return null;
+				return arr;
 			}
 			else {
 				System.out.println("make branch");
