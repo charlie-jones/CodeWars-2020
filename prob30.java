@@ -17,7 +17,7 @@ public class prob30 {
 		}
 
 		Node root = new Node(cake);
-		String[][] answer = root.iterate(cake);
+		String[][] answer = root.iterate(cake,0,0);
 //		for (int i = 0; i < n; i++) {
 //			System.out.println(Arrays.toString(cake[i]));
 //		}
@@ -239,35 +239,38 @@ public class prob30 {
 			cake = arr.clone();
 		}
 		
-		public String[][] iterate(String[][] arr) {
+		public String[][] iterate(String[][] arr, int i, int j) {
 			if (!twoByTwoCheck(arr)) {
 				System.out.println("branch ended");
 				return null;
 			}
-			int[] next = findNextQuestionMark(cake);
-			int[] tmpLocation = next==null ? null : next.clone();
-			if (tmpLocation == null) {
-				return arr;
+			System.out.println("make branch");
+			String[][] leftBranch = arr.clone();
+			String[][] rightBranch = arr.clone();
+			leftBranch[i][j] = ".";
+			rightBranch[i][j] = "#";
+			
+//			int[] next = findNextQuestionMark(cake); // OLD code
+//			int[] tmpLocation = next==null ? null : next.clone();
+//			if (tmpLocation == null) {
+//				return arr;
+//			}
+			
+			// INSTEAD, find ALL available question marks
+			// for loop here
+			
+			String[][] left = iterate(leftBranch, i,j); //  change from i,j to location of a question mark
+			String[][] right = iterate(rightBranch,i,j); //  change to above
+			
+			if (left == null && right == null) {
+				return null;
 			}
-			else {
-				System.out.println("make branch");
-				String[][] leftBranch = arr.clone();
-				String[][] rightBranch = arr.clone();
-				leftBranch[tmpLocation[0]][tmpLocation[1]] = ".";
-				rightBranch[tmpLocation[0]][tmpLocation[1]] = "#";
-				String[][] left = iterate(leftBranch);
-				String[][] right = iterate(rightBranch);
-				
-				if (left == null && right == null) {
-					return null;
-				}
-				
-				if (left == null && right != null) {
-					return right;
-				}
-				
-				return left;
+			
+			if (left == null && right != null) {
+				return right;
 			}
+			
+			return left;
 		}
 	}
 }
