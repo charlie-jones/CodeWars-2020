@@ -268,28 +268,31 @@ public class prob30 {
 		}
 		
 		public String[][] iterate(String[][] arr) {
-			int[] tmpLocation = findNextQuestionMark(cake);
-			System.out.println("make branch");
+			int[] next = findNextQuestionMark(cake);
+			int[] tmpLocation = next==null ? null : next.clone();
 			if (tmpLocation == null) {
-				if (twoByTwoCheck(arr) == true && connectedCheck(arr) == true && loopCheck(arr) == true) {
+				System.out.println("nulll");
+				if (twoByTwoCheck(arr)) {
+					System.out.println("fdsfds");
 					return arr;
 				}
 				
 				return null;
 			}
 			else {
-				String[][] leftBranch = arr;
-				String[][] rightBranch = arr;
+				System.out.println("make branch");
+				String[][] leftBranch = arr.clone();
+				String[][] rightBranch = arr.clone();
 				leftBranch[tmpLocation[0]][tmpLocation[1]] = ".";
 				rightBranch[tmpLocation[0]][tmpLocation[1]] = "#";
 				String[][] left = iterate(leftBranch);
 				String[][] right = iterate(rightBranch);
 				
-				if (left == null & right == null) {
+				if (left == null && right == null) {
 					return null;
 				}
 				
-				if (left == null & right != null) {
+				if (left == null && right != null) {
 					return right;
 				}
 				
