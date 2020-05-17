@@ -2,8 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 public class prob30 {
 	public static void main (String[] args) throws NumberFormatException, IOException {
@@ -22,7 +21,9 @@ public class prob30 {
 //		for (int i = 0; i < n; i++) {
 //			System.out.println(Arrays.toString(cake[i]));
 //		}
-
+		
+		// System.out.println(twoByTwoCheck(cake)); // PASS
+		
 		print2D(cake, n);
 	}
 	
@@ -190,59 +191,30 @@ public class prob30 {
 		return true;
 	}
 	
-	//could make more efficient by doing (n - 1)^2
-	private static boolean twoByTwoCheck(String[][] arr) {
-		
-		for (int i = 0; i < arr.length - 1; i++) {
-			for (int  j = 0; j < arr.length - 1; j++) {
-				if (arr[i][j].equals("#") && arr[i + 1][j].equals("#") && arr[i][j + 1].equals("#") && arr[i + 1][j + 1].equals("#")) {
-					return false;
-				}
-				
-				if (arr[i][j].equals(".") && arr[i + 1][j].equals(".") && arr[i][j + 1].equals(".") && arr[i + 1][j + 1].equals(".")) {
-					return false;
-				}
+	private static boolean twoByTwoCheck(String[][] grid) { // true = cake is free of 2x2
+		for (int i = 0; i < grid.length; i++) {
+			for (int j = 0; j < grid.length; j++) {
+				if (twoBytwoHelp(grid, i, j)) return false;
 			}
 		}
-		
-		
-		for (int i = arr.length - 1; i > 0; i--) {
-			for (int  j = arr.length - 1; j > 0; j--) {
-				if (arr[i][j].equals("#") && arr[i - 1][j].equals("#") && arr[i][j - 1].equals("#") && arr[i - 1][j - 1].equals("#")) {
-					return false;
-				}
-				
-				if (arr[i][j].equals(".") && arr[i - 1][j].equals(".") && arr[i][j - 1].equals(".") && arr[i - 1][j - 1].equals(".")) {
-					return false;
-				}
-			}
-		}
-		
-		for (int i = 0; i < arr.length - 1; i++) {
-			for (int  j = arr.length - 1; j > 0; j--) {
-				if (arr[i][j].equals("#") && arr[i + 1][j].equals("#") && arr[i][j - 1].equals("#") && arr[i + 1][j - 1].equals("#")) {
-					return false;
-				}
-				
-				if (arr[i][j].equals(".") && arr[i + 1][j].equals(".") && arr[i][j - 1].equals(".") && arr[i + 1][j - 1].equals(".")) {
-					return false;
-				}
-			}
-		}
-		
-		for (int i = arr.length - 1; i > 0; i--) {
-			for (int  j = 0; j < arr.length - 1; j++) {
-				if (arr[i][j].equals("#") && arr[i - 1][j].equals("#") && arr[i][j + 1].equals("#") && arr[i - 1][j + 1].equals("#")) {
-					return false;
-				}
-				
-				if (arr[i][j].equals(".") && arr[i - 1][j].equals(".") && arr[i][j + 1].equals(".") && arr[i - 1][j + 1].equals(".")) {
-					return false;
-				}
-			}
-		}
-		
 		return true;
+	}
+	static boolean twoBytwoHelp(String[][] grid, int i, int j) { // true = [i][j] is part of a 2x2
+		// top left, top right, bottom right, bottom left
+		String t = grid[i][j];
+		try {
+			if (grid[i][j-1] == t && grid[i-1][j-1] == t && grid[i-1][j] == t) return true;
+		} catch (Exception e) {}
+		try {
+			if (grid[i][j+1] == t && grid[i-1][j+1] == t && grid[i-1][j] == t) return true;
+		} catch (Exception e) {}
+		try {
+			if (grid[i][j+1] == t && grid[i+1][j+1] == t && grid[i+1][j] == t) return true;
+		} catch (Exception e) {}
+		try {
+			if (grid[i][j-1] == t && grid[i+1][j-1] == t && grid[i+1][j] == t) return true;
+		} catch (Exception e) {}
+		return false; // not 2x2
 	}
 	
 	public static int[] findNextQuestionMark(String[][] arr) {
