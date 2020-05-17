@@ -1,3 +1,5 @@
+package testproj;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -16,10 +18,12 @@ public class prob30 {
 				cake[i][j] = String.valueOf(in.charAt(j));
 			}
 		}
-//		for (int i = 0; i < n; i++) {
-//			System.out.println(Arrays.toString(cake[i]));
-//		}
+		
 		Node root = new Node(cake);
+		String[][] answer = root.iterate(cake);
+		for (int i = 0; i < n; i++) {
+			System.out.println(Arrays.toString(cake[i]));
+		}
 		
 	}
 	
@@ -248,7 +252,7 @@ public class prob30 {
 	}
 	
 	static class Node {
-		String[][] cake; 
+		private String[][] cake; 
 	
 		public Node (String[][] arr) {
 			cake = arr;
