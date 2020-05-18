@@ -8,7 +8,7 @@ public class prob18 {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		
-		BufferedReader f = new BufferedReader(new FileReader("prob18-3-in.txt"));
+		BufferedReader f = new BufferedReader(new FileReader("input.txt"));
 		
 		while(true) {
 			String in = f.readLine();
