@@ -11,7 +11,7 @@ import java.util.*;
 
 
 public class prob30 {
-
+	static String[][] out;
 	public static void main (String[] args) throws NumberFormatException, IOException {
 
 		BufferedReader br = new BufferedReader(new FileReader("input.txt"));
@@ -32,19 +32,9 @@ public class prob30 {
 
 		}
 
-
-
 		Node root = new Node(cake);
 
-		boolean[][] isVisited = new boolean[n][n];
-
-		for (boolean[] b : isVisited) {
-
-			Arrays.fill(b, false);
-
-		}
-
-		root.iterate(cake,0,0, isVisited); // change from 0,0 to a location found to have a question mark
+		root.iterate(0,0); // change from 0,0 to a location found to have a question mark
 
 //		for (int i = 0; i < n; i++) {
 
@@ -58,7 +48,7 @@ public class prob30 {
 
 		
 
-		print2D(cake, n);
+		print2D(root.cake.clone(), n);
 
 	}
 
@@ -499,7 +489,7 @@ public class prob30 {
 	static class Node {
 
 		private String[][] cake; 
-
+		private String[][] outCake; 
 	
 
 		public Node (String[][] arr) {
@@ -509,102 +499,40 @@ public class prob30 {
 		}
 
 		
-
-		public String[][] iterate(String[][] arr, int i, int j, boolean[][] visited) {
-
-			if (!twoByTwoCheck(arr)) {
-
-				System.out.println("branch ended");
-
-				return null;
-
-			}
-
-			visited[i][j] = true;
-
-			String[][] leftBranch = arr.clone();
-
-			String[][] rightBranch = arr.clone();
-
-			leftBranch[i][j] = ".";
-
-			rightBranch[i][j] = "#";
-
-			
-
-//			int[] next = findNextQuestionMark(cake); // OLD code
-
-//			int[] tmpLocation = next==null ? null : next.clone();
-
-//			if (tmpLocation == null) {
-
-//				return arr;
-
-//			}
-
-			ArrayList<Integer>[] qMarks = findAvailableQuestionMarks(arr).clone();
-
-			// System.out.println(Arrays.toString(qMarks)); // PASS
-
-			int siz = arr.length;
-
-			String[][] left = new String[siz][siz];
-
-			String[][] right = new String[siz][siz];
-
+		
+		public void iterate(int i, int j) {
+			ArrayList<Integer>[] qMarks = findAvailableQuestionMarks(cake);
 			int len = qMarks[0].size();
-			System.out.println(len);
-			System.out.println("reenter");
-			for (int a = 0; a < len; a++) {
-
-				System.out.println("new branch");
-
-				int iPos = qMarks[0].get(a);
-
-				int jPos = qMarks[1].get(a);
-
-				if (visited[iPos][jPos]) continue;
-
-				visited[iPos][jPos] = true;
-
-				try {
-
-					left = iterate(leftBranch, iPos, jPos, visited).clone(); 
-
-				} catch (Exception e) {}
-
-				try {
-
-					right = iterate(rightBranch, iPos, jPos, visited).clone(); 
-
-				} catch (Exception e) {}
-
+			//print2D(arr, arr.length);
+			if (len == 0) {
+				//print2D(cake, cake.length);
+				outCake = cake;
 			}
-
-			
-
-			visited[i][j] = false;
-
-			
-
-			if (left == null && right == null) {
-
-				return null;
-
+			cake[i][j] = ".";
+			boolean dotsOk = twoByTwoCheck(cake);
+			cake[i][j] = "#";
+			boolean hashesOk = twoByTwoCheck(cake);
+			cake[i][j] = "?";
+			if (dotsOk || hashesOk) {
+				for (int a = 0; a < len; a++) {
+					//System.out.println("new branch");
+					
+					int iPos = qMarks[0].get(a);
+					int jPos = qMarks[1].get(a);
+					if (dotsOk) {
+						cake[i][j] = ".";
+						iterate(iPos,jPos);
+					}
+					if (hashesOk) {
+						cake[i][j] = "#";
+						iterate(iPos,jPos);
+					}
+				}
 			}
-
 			
-
-			if (left == null && right != null) {
-
-				return right;
-
-			}
-
+			//System.out.println("branch finished");
 			
-
-			return left;
-
+			
 		}
 
 	}
