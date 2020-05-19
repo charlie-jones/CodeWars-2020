@@ -12,6 +12,7 @@ import java.util.*;
 
 public class prob30 {
 	static String[][] out;
+	static int states = 0;
 	public static void main (String[] args) throws NumberFormatException, IOException {
 
 		BufferedReader br = new BufferedReader(new FileReader("input.txt"));
@@ -48,7 +49,7 @@ public class prob30 {
 
 		
 
-		print2D(root.cake.clone(), n);
+		print2D(root.outCake.clone(), n);
 
 	}
 
@@ -70,231 +71,44 @@ public class prob30 {
 
 		}
 
-	}
-
+	}	
 	
-
-	private static String[][] fillInGivens(String[][] arr) {
-
-		String[][] answer = arr;
-
-		
-
-		for (int i = 1; i < arr.length - 1; i++) {
-
-			for (int j = 1; j < arr.length - 1; j++) {
-
-				//change to deal with corners, tops, sides, bottoms, and all 4 2x2 squares
-
-				if (arr[i][j].equals("?") && arr[i][j - 1].equals(".") && arr[i - 1][j].equals(".") && arr[i - 1][j - 1].equals(".")) {
-
-					arr[i][j] = "#";
-
-				}
-
-				
-
-				if (arr[i][j].equals("?") && arr[i][j + 1].equals(".") && arr[i + 1][j].equals(".") && arr[i + 1][j + 1].equals(".")) {
-
-					arr[i][j] = "#";
-
-				}
-
-				
-
-				if (arr[i][j].equals("?") && arr[i][j - 1].equals("#") && arr[i - 1][j].equals("#") && arr[i - 1][j - 1].equals("#")) {
-
-					arr[i][j] = ".";
-
-				}
-
-				
-
-				if (arr[i][j].equals("?") && arr[i][j + 1].equals("#") && arr[i + 1][j].equals("#") && arr[i + 1][j + 1].equals("#")) {
-
-					arr[i][j] = ".";
-
-				}
-
-				
-
-				if (arr[i][j].equals("?") && arr[i][j - 1].equals("#") && arr[i + 1][j].equals("#") && arr[i + 1][j - 1].equals("#")) {
-
-					arr[i][j] = ".";
-
-				}
-
-				
-
-				if (arr[i][j].equals("?") && arr[i][j - 1].equals(".") && arr[i + 1][j].equals(".") && arr[i + 1][j - 1].equals(".")) {
-
-					arr[i][j] = ".";
-
-				}
-
-				
-
-				if (arr[i][j].equals("?") && arr[i][j - 1].equals("#") && arr[i - 1][j].equals("#") && arr[i - 1][j - 1].equals("#")) {
-
-					arr[i][j] = "#";
-
-				}
-
-				
-
-				if (arr[i][j].equals("?") && arr[i - 1][j].equals(".") && arr[i][j + 1].equals(".") && arr[i - 1][j + 1].equals(".")) {
-
-					arr[i][j] = "#";
-
-				}
-
-			}
-
+	static boolean inBounds(int x, int y, int N) {
+		if (x < 0 || x >= N || y < 0 || y >= N) {// Boundaries for *possible replacement
+	        return false; 
 		}
-
-		
-
-		return answer;
-
+		return true;
 	}
-
-	
-
-	private static boolean connectedCheck(String[][] arr) {
-
-		int hashes = 0;
-
-		int dots = 0;
-
-		int[] dotStartPoint = new int[2];
-
-		int[] hashStartPoint = new int[2];
-
+	static void fillRoom(int x, int y, int group, String[][] arr, int[][] groups, String type) {
+		if (!(arr[x][y].equals(type) || arr[x][y].equals("?"))) return;
+		groups[x][y] = group;
+	    if (inBounds(x+1,y,arr.length) && groups[x+1][y] == -1) fillRoom(x+1, y, group,arr,groups,type); 
+	    if (inBounds(x-1,y,arr.length) && groups[x-1][y] == -1) fillRoom(x-1, y, group,arr,groups,type); 
+	    if (inBounds(x,y+1,arr.length) && groups[x][y+1] == -1) fillRoom(x, y+1, group,arr,groups,type); 
+	    if (inBounds(x,y-1,arr.length) && groups[x][y-1] == -1) fillRoom(x, y-1, group,arr,groups,type);  
+	}
+	private static int connectedCheck(String[][] arr, int[][] groups) {
+		int gr = 0;
 		for (int i = 0; i < arr.length; i++) {
-
-			for (int j = 0; j < arr.length; j++) {
-
-				if (arr[i][j].equals(".")) {
-
-					dots++;
-
-					dotStartPoint[0] = i;
-
-					dotStartPoint[1] = j;
-
+			for (int j = 0; j <  arr.length; j++) {
+				// reset
+				ArrayList<Integer>[] qMarks = findAvailableQuestionMarks(arr); 
+				int len = qMarks[0].size();
+				for (int a = 0; a < len; a++) {
+					//System.out.println("new branch");
+					int iPos = qMarks[0].get(a);
+					int jPos = qMarks[1].get(a);
+					groups[iPos][jPos] = -1;
 				}
-
-				
-
-				if (arr[i][j].equals("#")) {
-
-					hashes++;
-
-					hashStartPoint[0] = i;
-
-					hashStartPoint[1] = j;
-
+				if (groups[i][j] == -1 && !arr[i][j].equals("?")) {
+					fillRoom(i,j,++gr,arr,groups,arr[i][j]); // gr starts at 1
 				}
-
 			}
-
 		}
-
-		
-
-		if (expand(arr, new ArrayList<String>(), ".", dotStartPoint) == dots && expand(arr, new ArrayList<String>(), "#", hashStartPoint) == hashes) {
-
-			return true;
-
-		}
-
-		
-
-		return false;
-
+		return gr;
 	}
 
-	
-
-	private static int expand(String[][] arr, ArrayList<String> pointsUsed, String type, int[] point) {
-
-		int answer = 0;
-
-		int i = point[0];
-
-		int j = point[1];
-
-		if (i - 1 > 0) {
-
-			if (arr[i - 1][j].equals(type) && pointsUsed.contains((i - 1) + "" + j) == false ) {
-
-				pointsUsed.add((i - 1) + "" + j);
-
-				answer++;
-
-				answer = answer + expand(arr, pointsUsed, type, new int[] {i - 1, j });
-
-			}
-
-		}
-
-		
-
-		if (j - 1 > 0) {
-
-			if (arr[i][j - 1].equals(type) && pointsUsed.contains(i + "" + (j - 1)) == false ) {
-
-				pointsUsed.add(i + "" + (j - 1));
-
-				answer++;
-
-				answer = answer + expand(arr, pointsUsed, type, new int[] {i, j - 1});
-
-			}
-
-		}
-
-		
-
-		if (j + 1 < arr.length) {
-
-			if (arr[i][j + 1].equals(type) && pointsUsed.contains(i + "" + (j + 1)) == false ) {
-
-				pointsUsed.add(i + "" + (j + 1));
-
-				answer++;
-
-				answer = answer + expand(arr, pointsUsed, type, new int[] {i, j + 1});
-
-			}
-
-		}
-
-		
-
-		if (i + 1 > 0) {
-
-			if (arr[i + 1][j].equals(type) && pointsUsed.contains((i + 1) + "" + j) == false ) {
-
-				pointsUsed.add((i + 1) + "" + j);
-
-				answer++;
-
-				answer = answer + expand(arr, pointsUsed, type, new int[] {i + 1, j});
-
-			}
-
-		}
-
-		
-
-		return answer;
-
-	}
-
-	
-
-	private static boolean loopCheck(String[][] arr) {
+	private static boolean loopCheck(String[][] arr) { // true = no loop problem
 
 		//checks for 3x3 loops and for an outer loop
 
@@ -304,21 +118,9 @@ public class prob30 {
 
 		for (int i = 0; i < arr.length - 1; i++) {
 
-			if (arr[0][i].equals(arr[0][i + 1])) {
+			if (!(arr[0][i].equals(arr[0][i + 1]))) {
 
-				return false;
-
-			}
-
-		}
-
-		
-
-		for (int i = 0; i < arr.length - 1; i++) {
-
-			if (arr[arr.length - 1][i].equals(arr[arr.length - 1][i + 1])) {
-
-				return false;
+				return true;
 
 			}
 
@@ -328,9 +130,9 @@ public class prob30 {
 
 		for (int i = 0; i < arr.length - 1; i++) {
 
-			if (arr[i][0].equals(arr[i + 1][0])) {
+			if (!(arr[arr.length - 1][i].equals(arr[arr.length - 1][i + 1]))) {
 
-				return false;
+				return true;
 
 			}
 
@@ -340,35 +142,9 @@ public class prob30 {
 
 		for (int i = 0; i < arr.length - 1; i++) {
 
-			if (arr[i][arr.length - 1].equals(arr[i + 1][arr.length - 1])) {
+			if (!(arr[i][0].equals(arr[i + 1][0]))) {
 
-				return false;
-
-			}
-
-		}
-
-		
-
-		//checking for 3x3 loops
-
-		for (int i = 1; i < arr.length - 1; i++) {
-
-			for (int j = 1; j < arr.length - 1; j++) {
-
-				if (arr[i-1][j-1].equals("#") && arr[i-1][j].equals("#") && arr[i-1][j+1].equals("#") && arr[i][j-1].equals("#") && arr[i][j+1].equals("#") && arr[i+1][j-1].equals("#") && arr[i+1][j].equals("#") && arr[i+1][j+1].equals("#")) {
-
-					return false;
-
-				}
-
-				
-
-				if (arr[i-1][j-1].equals(".") && arr[i-1][j].equals(".") && arr[i-1][j+1].equals(".") && arr[i][j-1].equals(".") && arr[i][j+1].equals(".") && arr[i+1][j-1].equals(".") && arr[i+1][j].equals(".") && arr[i+1][j+1].equals(".")) {
-
-					return false;
-
-				}
+				return true;
 
 			}
 
@@ -376,7 +152,19 @@ public class prob30 {
 
 		
 
-		return true;
+		for (int i = 0; i < arr.length - 1; i++) {
+
+			if (!(arr[i][arr.length - 1].equals(arr[i + 1][arr.length - 1]))) {
+
+				return true;
+
+			}
+
+		}
+
+		
+
+		return false;
 
 	}
 
@@ -491,27 +279,45 @@ public class prob30 {
 		private String[][] cake; 
 		private String[][] outCake; 
 	
-
+		static boolean end = false;
 		public Node (String[][] arr) {
 
 			cake = arr.clone();
-
+			outCake=cake;
 		}
-
-		
 		
 		public void iterate(int i, int j) {
+			if (end) return;
 			ArrayList<Integer>[] qMarks = findAvailableQuestionMarks(cake);
 			int len = qMarks[0].size();
 			//print2D(arr, arr.length);
 			if (len == 0) {
-				//print2D(cake, cake.length);
+				
 				outCake = cake;
+//				print2D(outCake,cake.length);
+//				System.out.println("--------------");
 			}
+			print2D(outCake,cake.length);
+			System.out.println("--------------");
 			cake[i][j] = ".";
-			boolean dotsOk = twoByTwoCheck(cake);
+			int[][] Gs = new int[cake.length][cake.length];
+			for (int[] b : Gs) {
+				Arrays.fill(b, -1);
+			}
+			boolean dotsOk = (twoByTwoCheck(cake) && loopCheck(cake) && connectedCheck(cake, Gs) <= 2); // check if "loopCheck works"
+//			int[] blah = new int[100000];
+//			for (int a = 0; a < 100000; a++) { // simulates a connected check
+//				blah[a] += 5;
+//			}
 			cake[i][j] = "#";
-			boolean hashesOk = twoByTwoCheck(cake);
+			Gs = new int[cake.length][cake.length];
+			for (int[] b : Gs) {
+				Arrays.fill(b, -1);
+			}
+			boolean hashesOk = (twoByTwoCheck(cake) && loopCheck(cake) && connectedCheck(cake, Gs) <= 2);
+//			for (int a = 0; a < 100000; a++) { // simulates a connected check
+//				blah[a] += 5;
+//			}
 			cake[i][j] = "?";
 			if (dotsOk || hashesOk) {
 				for (int a = 0; a < len; a++) {
@@ -531,8 +337,8 @@ public class prob30 {
 			}
 			
 			//System.out.println("branch finished");
-			
-			
+			//System.out.println(++states); // # program calls on iterate -- then find the bigO of 1 pass thru iterate 
+
 		}
 
 	}
