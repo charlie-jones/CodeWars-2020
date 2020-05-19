@@ -1,346 +1,259 @@
 import java.io.BufferedReader;
-
 import java.io.FileNotFoundException;
-
 import java.io.FileReader;
-
 import java.io.IOException;
-
 import java.util.*;
 
-
-
 public class prob30 {
-	static String[][] out;
-	static int states = 0;
-	public static void main (String[] args) throws NumberFormatException, IOException {
-
-		BufferedReader br = new BufferedReader(new FileReader("input.txt"));
-
-		int n = Integer.parseInt(br.readLine());
-
-		String cake[][] = new String[n][n];
-
+	
+	
+	public static void main (String[] args) throws IOException {
+		BufferedReader f = new BufferedReader(new FileReader("input.txt"));
+		long time = System.currentTimeMillis();
+		int n = Integer.parseInt(f.readLine());
+		char[][] cake = new char[n][n];
+		int count = 0;
+		//fill Array
 		for (int i = 0; i < n; i++) {
-
-			String in = br.readLine();
-
+			String in = f.readLine();
 			for (int j = 0; j < n; j++) {
-
-				cake[i][j] = String.valueOf(in.charAt(j));
-
-			}
-
-		}
-
-		Node root = new Node(cake);
-
-		root.iterate(0,0); // change from 0,0 to a location found to have a question mark
-
-//		for (int i = 0; i < n; i++) {
-
-//			System.out.println(Arrays.toString(cake[i]));
-
-//		}
-
-		
-
-		// System.out.println(twoByTwoCheck(cake)); // PASS
-
-		
-
-		print2D(root.outCake.clone(), n);
-
-	}
-
-	
-
-	private static void print2D(String[][] cake, int n) {
-
-		for (int i = 0; i < n; i++) {
-
-			String ln = "";
-
-			for (int j = 0; j < n; j++) {
-
-				ln += cake[i][j];
-
-			}
-
-			System.out.println(ln);
-
-		}
-
-	}	
-	
-	static boolean inBounds(int x, int y, int N) {
-		if (x < 0 || x >= N || y < 0 || y >= N) {// Boundaries for *possible replacement
-	        return false; 
-		}
-		return true;
-	}
-	static void fillRoom(int x, int y, int group, String[][] arr, int[][] groups, String type) {
-		if (!(arr[x][y].equals(type) || arr[x][y].equals("?"))) return;
-		groups[x][y] = group;
-	    if (inBounds(x+1,y,arr.length) && groups[x+1][y] == -1) fillRoom(x+1, y, group,arr,groups,type); 
-	    if (inBounds(x-1,y,arr.length) && groups[x-1][y] == -1) fillRoom(x-1, y, group,arr,groups,type); 
-	    if (inBounds(x,y+1,arr.length) && groups[x][y+1] == -1) fillRoom(x, y+1, group,arr,groups,type); 
-	    if (inBounds(x,y-1,arr.length) && groups[x][y-1] == -1) fillRoom(x, y-1, group,arr,groups,type);  
-	}
-	private static int connectedCheck(String[][] arr, int[][] groups) {
-		int gr = 0;
-		for (int i = 0; i < arr.length; i++) {
-			for (int j = 0; j <  arr.length; j++) {
-				// reset
-				ArrayList<Integer>[] qMarks = findAvailableQuestionMarks(arr); 
-				int len = qMarks[0].size();
-				for (int a = 0; a < len; a++) {
-					//System.out.println("new branch");
-					int iPos = qMarks[0].get(a);
-					int jPos = qMarks[1].get(a);
-					groups[iPos][jPos] = -1;
+				if(in.charAt(j) == '?') {
+					count++;
 				}
-				if (groups[i][j] == -1 && !arr[i][j].equals("?")) {
-					fillRoom(i,j,++gr,arr,groups,arr[i][j]); // gr starts at 1
+				cake[i][j] = in.charAt(j);
+			}
+		}
+		//Mark positions of ?s
+		int[] validSpots = new int[count];
+		int spot = 0;
+		for(int i = 0; i < n; i++) {
+			for(int j = 0; j < n; j++) {
+				if(cake[i][j] == '?') {
+					validSpots[spot] = i*n + j;
+					spot++;
+//					System.out.println("(" + i + ", " + j + ")");
 				}
 			}
 		}
-		return gr;
-	}
-
-	private static boolean loopCheck(String[][] arr) { // true = no loop problem
-
-		//checks for 3x3 loops and for an outer loop
-
-		
-
-		
-
-		for (int i = 0; i < arr.length - 1; i++) {
-
-			if (!(arr[0][i].equals(arr[0][i + 1]))) {
-
-				return true;
-
-			}
-
-		}
-
-		
-
-		for (int i = 0; i < arr.length - 1; i++) {
-
-			if (!(arr[arr.length - 1][i].equals(arr[arr.length - 1][i + 1]))) {
-
-				return true;
-
-			}
-
-		}
-
-		
-
-		for (int i = 0; i < arr.length - 1; i++) {
-
-			if (!(arr[i][0].equals(arr[i + 1][0]))) {
-
-				return true;
-
-			}
-
-		}
-
-		
-
-		for (int i = 0; i < arr.length - 1; i++) {
-
-			if (!(arr[i][arr.length - 1].equals(arr[i + 1][arr.length - 1]))) {
-
-				return true;
-
-			}
-
-		}
-
-		
-
-		return false;
-
-	}
-
-	
-
-	private static boolean twoByTwoCheck(String[][] grid) { // true = cake is free of 2x2
-
-		for (int i = 0; i < grid.length; i++) {
-
-			for (int j = 0; j < grid.length; j++) {
-
-				if (twoBytwoHelp(grid, i, j)) return false;
-
-			}
-
-		}
-
-		return true;
-
-	}
-
-	static boolean twoBytwoHelp(String[][] grid, int i, int j) { // true = [i][j] is part of a 2x2
-
-		// top left, top right, bottom right, bottom left
-
-		String t = grid[i][j];
-		if (t.equals("?")) return false;
-		try {
-
-			if (grid[i][j-1].equals(t) && grid[i-1][j-1].equals(t) && grid[i-1][j].equals(t)) return true;
-
-		} catch (Exception e) {}
-
-		try {
-
-			if (grid[i][j+1].equals(t) && grid[i-1][j+1].equals(t) && grid[i-1][j].equals(t)) return true;
-
-		} catch (Exception e) {}
-
-		try {
-
-			if (grid[i][j+1].equals(t) && grid[i+1][j+1].equals(t) && grid[i+1][j].equals(t)) return true;
-
-		} catch (Exception e) {}
-
-		try {
-
-			if (grid[i][j-1].equals(t) && grid[i+1][j-1].equals(t) && grid[i+1][j].equals(t)) return true;
-
-		} catch (Exception e) {}
-
-		return false; // not 2x2
-
-	}
-
-	
-
-	public static ArrayList<Integer>[] findAvailableQuestionMarks(String[][] arr) {
-
-		ArrayList<Integer>[] answer = new ArrayList[2];
-
-		answer[0] = new ArrayList<Integer>();
-
-		answer[1] = new ArrayList<Integer>();
-
-		for (int i = 0; i < arr.length; i++) {
-
-
-
-			for (int j = 0; j < arr.length; j++) {
-
-
-
-				if (arr[i][j].equals("?")) {
-
-					
-
-					answer[0].add(i);
-
-
-
-					answer[1].add(j);
-
-
-
+		//loop
+		for(int val = 0; val < count; val++) {
+			int index = validSpots[val];
+//			System.out.println("-----");
+//			System.out.println(index);
+			int j = index % n;
+			int i = (index-j)/n;
+			if(cake[i][j] == '?') {
+				//start with this guess
+				cake[i][j] = '#';
+			} else if (cake[i][j] == '#') {
+				//try the other
+				cake[i][j] = '.';
+			} else if (cake[i][j] == '.') {
+				cake[i][j] = '?';
+				//Error: go back and fix
+				if(val == 0) {
+					//System.out.println("Failed To Validate at Nothing");
+					break;
 				}
-
-
-
+				val -= 2;
+				continue;
 			}
-
-
-
+			//if not valid
+//			print2D(cake, n);
+//			System.out.println("grids: " + noGrids(cake, n));
+//			System.out.println("connected: " + connectedCheck(cake));
+			if(!(goodBorders(cake, n) && noGrids(cake, n) && connectedCheck(cake))) {
+//				System.out.println("Try Again");
+				//try again
+				val -= 1;
+			} // else, move on
 		}
-
-
-
+		print2D(cake, n);
+//		long timeEllapsed = System.currentTimeMillis() - time;
+//		System.out.println("Milliseconds: " + timeEllapsed);
 		
-
-		
-
-		return answer;
-
-
 
 	}
-
 	
-
-	static class Node {
-
-		private String[][] cake; 
-		private String[][] outCake; 
-	
-		static boolean end = false;
-		public Node (String[][] arr) {
-
-			cake = arr.clone();
-			outCake=cake;
-		}
+	private static boolean goodBorders(char[][] arr, int n) {
 		
-		public void iterate(int i, int j) {
-			if (end) return;
-			ArrayList<Integer>[] qMarks = findAvailableQuestionMarks(cake);
-			int len = qMarks[0].size();
-			//print2D(arr, arr.length);
-			if (len == 0) {
-				
-				outCake = cake;
-//				print2D(outCake,cake.length);
-//				System.out.println("--------------");
-			}
-			print2D(outCake,cake.length);
-			System.out.println("--------------");
-			cake[i][j] = ".";
-			int[][] Gs = new int[cake.length][cake.length];
-			for (int[] b : Gs) {
-				Arrays.fill(b, -1);
-			}
-			boolean dotsOk = (twoByTwoCheck(cake) && loopCheck(cake) && connectedCheck(cake, Gs) <= 2); // check if "loopCheck works"
-//			int[] blah = new int[100000];
-//			for (int a = 0; a < 100000; a++) { // simulates a connected check
-//				blah[a] += 5;
-//			}
-			cake[i][j] = "#";
-			Gs = new int[cake.length][cake.length];
-			for (int[] b : Gs) {
-				Arrays.fill(b, -1);
-			}
-			boolean hashesOk = (twoByTwoCheck(cake) && loopCheck(cake) && connectedCheck(cake, Gs) <= 2);
-//			for (int a = 0; a < 100000; a++) { // simulates a connected check
-//				blah[a] += 5;
-//			}
-			cake[i][j] = "?";
-			if (dotsOk || hashesOk) {
-				for (int a = 0; a < len; a++) {
-					//System.out.println("new branch");
-					
-					int iPos = qMarks[0].get(a);
-					int jPos = qMarks[1].get(a);
-					if (dotsOk) {
-						cake[i][j] = ".";
-						iterate(iPos,jPos);
-					}
-					if (hashesOk) {
-						cake[i][j] = "#";
-						iterate(iPos,jPos);
+		int i = 0;
+		int j = 0;
+		char firstType = '?';
+		char secondType = '?';
+		boolean ontoSecond = false;
+		boolean returnedToFirst = false;
+		for(int loop = 0; loop < 4; loop++) {
+//			System.out.println("-At: (" + i + ", " + j + ")");
+			while(i < n && j < n && i >= 0 && j >= 0) {
+				if(firstType == '?' && arr[i][j] != '?') {
+					firstType = arr[i][j];
+				} else {
+					if(!ontoSecond) {
+						if(arr[i][j] != firstType && arr[i][j] != '?') {
+							ontoSecond = true;
+//							System.out.println("Onto Second: (" + i + ", " + j + ")");
+							secondType = arr[i][j];
+						}
+					} else {
+						if(!returnedToFirst) {
+							if(arr[i][j] != secondType && arr[i][j] != '?') {
+								returnedToFirst = true;
+//								System.out.println("Returned To First: (" + i + ", " + j + ")");
+							}
+						} else {
+							if(arr[i][j] != firstType && arr[i][j] != '?') {
+								return false;
+							}
+						}
 					}
 				}
+				switch(loop) {
+				case 0:
+					i++;
+					break;
+				case 1:
+					j++;
+					break;
+				case 2:
+					i--;
+					break;
+				case 3:
+					j--;
+					break;
+				}
+			}
+			switch(loop) {
+			case 0:
+				i--;
+				break;
+			case 1:
+				j--;
+				break;
+			case 2:
+				i++;
+				break;
 			}
 			
-			//System.out.println("branch finished");
-			//System.out.println(++states); // # program calls on iterate -- then find the bigO of 1 pass thru iterate 
-
 		}
 
+		return true;
 	}
-
+	
+	private static boolean noGrids(char[][] arr, int n) {
+		for(int i = 0; i < n-1; i++) {
+			for(int j = 0; j < n-1; j++) {
+				char checker = arr[i][j];
+				if(checker != '?' && arr[i+1][j] == checker && arr[i][j+1] == checker && arr[i+1][j+1] == checker) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	private static boolean connectedCheck(char[][] arr) {
+//		print2D(arr, arr.length);
+		int hashes = 0;
+		int dots = 0;
+		int[] dotStartPoint = new int[2];
+		int[] hashStartPoint = new int[2];
+		for (int i = 0; i < arr.length; i++) {
+			for (int j = 0; j < arr.length; j++) {
+				if (arr[i][j] == '.') {
+					dots++;
+					dotStartPoint[0] = i;
+					dotStartPoint[1] = j;
+				} else if (arr[i][j] == '#') {
+					hashes++;
+					hashStartPoint[0] = i;
+					hashStartPoint[1] = j;
+				}
+			}
+		}
+		if(expand(arr, '.', dotStartPoint) + 1 == dots) {
+			pointsUsed.clear();
+			if(expand(arr, '#', hashStartPoint) + 1 == hashes) {
+				pointsUsed.clear();
+				return true;
+			} else {
+				pointsUsed.clear();
+			}
+		} else {
+			pointsUsed.clear();
+		}
+		
+		return false;
+	}
+	//outside for global access and consistency
+	public static ArrayList<String> pointsUsed = new ArrayList<String>();
+	
+	private static int expand(char[][] arr, char type, int[] point) {
+		int answer = 0;
+		int i = point[0];
+		int j = point[1];
+		pointsUsed.add(i + "-" + j);
+//		System.out.println(type + " : " + "Current Spot: (" + i + ", " + j + ")");
+//		System.out.println("________________________________Points" + pointsUsed.toString());
+		if (i - 1 >= 0) {
+			if ((arr[i - 1][j] == type ||  arr[i - 1][j] == '?') && pointsUsed.contains((i - 1) + "-" + j) == false ) {
+//				System.out.println("Current Spot: (" + i + ", " + j + ")" + "UP");
+//				pointsUsed.add((i - 1) + "" + j);
+				if(!(arr[i - 1][j] == '?')) {
+					answer++;
+//					System.out.println("(" + (i-1) + ", " + (j) + ") - Plus");
+				}
+				answer = answer + expand(arr, type, new int[] {i - 1, j });
+			}
+		}
+		
+		if (j - 1 >= 0) {
+			if ((arr[i][j - 1] == type || arr[i][j - 1] == '?') && pointsUsed.contains(i + "-" + (j - 1)) == false ) {
+//				System.out.println("Current Spot: (" + i + ", " + j + ")" + "LEFT");
+//				pointsUsed.add(i + "" + (j - 1));
+				if(!(arr[i][j - 1] == '?')) {
+					answer++;
+//					System.out.println("(" + (i) + ", " + (j-1) + ") - Plus");
+				}
+				answer = answer + expand(arr, type, new int[] {i, j - 1});
+			}
+		}
+		
+		if (j + 1 < arr.length) {
+			if ((arr[i][j + 1] == type || arr[i][j + 1] == '?') && pointsUsed.contains(i + "-" + (j + 1)) == false ) {
+//				System.out.println("Current Spot: (" + i + ", " + j + ")" + "RIGHT");
+//				pointsUsed.add(i + "" + (j + 1));
+				if(!(arr[i][j + 1] == '?')) {
+					answer++;
+//					System.out.println("(" + (i) + ", " + (j+1) + ") - Plus");
+				}
+				answer = answer + expand(arr, type, new int[] {i, j + 1});
+			}
+		}
+		
+		if (i + 1 < arr.length) {
+			if ((arr[i + 1][j] == type || arr[i + 1][j] == '?') && pointsUsed.contains((i + 1) + "-" + j) == false ) {
+//				System.out.println("Current Spot: (" + i + ", " + j + ")" + "Down");
+//				pointsUsed.add((i + 1) + "" + j);
+				if(!(arr[i + 1][j] == '?')) {
+					answer++;
+//					System.out.println("(" + (i+1) + ", " + (j) + ") - Plus");
+				}
+				answer = answer + expand(arr, type, new int[] {i + 1, j});
+			}
+		}
+		return answer;
+	}
+	
+	private static void print2D(char[][] cake, int n) {
+		for (int i = 0; i < n; i++) {
+			String ln = "";
+			for (int j = 0; j < n; j++) {
+				ln += cake[i][j];
+			}
+			System.out.println(ln);
+		}
+	}
+	
+	
 }
