@@ -8,7 +8,7 @@ public class prob30 {
 	
 	
 	public static void main (String[] args) throws IOException {
-		BufferedReader f = new BufferedReader(new FileReader("prob30-5-in.txt"));
+		BufferedReader f = new BufferedReader(new FileReader("input.txt"));
 		long time = System.currentTimeMillis();
 		int n = Integer.parseInt(f.readLine());
 		char[][] cake = new char[n][n];
