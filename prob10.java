@@ -12,8 +12,6 @@ public class prob10 {
 
 	public static void main (String[] args) throws IOException {
 
-		//MIGHT THIS CODE NOTE WORK -- replacing any random V or smthn
-
 		BufferedReader br = new BufferedReader(new FileReader("input.txt"));
 
 		String sentence = br.readLine();
@@ -71,14 +69,16 @@ public class prob10 {
 		}
 
 		int count = 0;
-
 		
+		sentence = sentence.replaceAll("\\[", "8").replaceAll("\\]","8");
+		sentence2 = sentence2.replaceAll("\\[", "8").replaceAll("\\]","8");
 
-		while (sentence.contains("AJ")) {
+
+		while (sentence.contains("8AJ8")) {
 
 			String v = adjectives.get(count);
 
-			sentence = sentence.replaceFirst("AJ", v);
+			sentence = sentence.replaceFirst("8AJ8", v);
 
 			
 
@@ -88,11 +88,11 @@ public class prob10 {
 
 
 
-		while (sentence.contains("AV")) {
+		while (sentence.contains("8AV8")) {
 
 			String v = adverbs.get(count);
 
-			sentence = sentence.replaceFirst("AV", v);
+			sentence = sentence.replaceFirst("8AV8", v);
 
 		
 
@@ -102,13 +102,13 @@ public class prob10 {
 
 		count = 0;
 
-		while (sentence.contains("N")) {
+		while (sentence.contains("8N8")) {
 
 			String v = nouns.get(count);
 
 			
 
-			sentence = sentence.replaceFirst("N", v);
+			sentence = sentence.replaceFirst("8N8", v);
 
 	
 
@@ -118,11 +118,11 @@ public class prob10 {
 
 
 
-		while (sentence.contains("V")) {
+		while (sentence.contains("8V8")) {
 
 			String v = verbs.get(count);
 
-			sentence = sentence.replaceFirst("V", v);
+			sentence = sentence.replaceFirst("8V8", v);
 
 	
 
@@ -130,19 +130,14 @@ public class prob10 {
 
 		}
 
-	
-
-		sentence = sentence.replaceAll("\\[", "").replaceAll("\\]","");
-
 		System.out.println(sentence);
-
 		
 
-		while (sentence2.contains("AJ")) {
+		while (sentence2.contains("8AJ8")) {
 
 			String v = adjectives.get(count);
 
-			sentence2 = sentence2.replaceFirst("AJ", v);
+			sentence2 = sentence2.replaceFirst("8AJ8", v);
 
 			
 
@@ -150,55 +145,49 @@ public class prob10 {
 
 		}
 
-		
 
-		while (sentence2.contains("AV")) {
+
+		while (sentence2.contains("8AV8")) {
 
 			String v = adverbs.get(count);
 
-			sentence2 = sentence2.replaceFirst("AV", v);
+			sentence2 = sentence2.replaceFirst("8AV8", v);
 
-			
+		
 
 			adverbs.remove(v);
 
 		}
 
-		
+		count = 0;
 
-		while (sentence2.contains("N")) {
-
-			
+		while (sentence2.contains("8N8")) {
 
 			String v = nouns.get(count);
 
 			
 
-			sentence2 = sentence2.replaceFirst("N", v);
+			sentence2 = sentence2.replaceFirst("8N8", v);
 
-			
+	
 
 			nouns.remove(v);
 
 		}
 
-		
 
-		while (sentence2.contains("V")) {
 
-			
+		while (sentence2.contains("8V8")) {
 
 			String v = verbs.get(count);
 
-			sentence2 = sentence2.replaceFirst("V ", v);
+			sentence2 = sentence2.replaceFirst("8V8", v);
 
-			
+	
 
 			verbs.remove(v);
 
 		}
-
-		sentence2 = sentence2.replaceAll("\\[", "").replaceAll("\\]","");
 
 		System.out.println(sentence2);
 
