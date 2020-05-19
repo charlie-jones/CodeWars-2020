@@ -20,7 +20,7 @@ public class prob05 {
 		if(isPrime) {
 			System.out.println(num + " is PRIME");
 		} else {
-			System.out.println(num + " is not PRIME");
+			System.out.println(num + " is NOT PRIME");
 		}
 		
 		f.close();
